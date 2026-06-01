@@ -34,7 +34,7 @@ export function Governance() {
   const draftResolution = async () => {
     setDraftLoading(true); setDraftText(null);
     try {
-      const res = await fetch('/api/governance/draft-resolution', {
+      fetch(`${import.meta.env.VITE_API_URL}/governance/draft-resolution`)
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ resolution_type: 'ESOP Grant Authorization', context: 'Authorize issuance of 500,000 stock options to senior employees at $4.20 strike price under the FY2026 ESOP plan' }),
