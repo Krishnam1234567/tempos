@@ -23,7 +23,7 @@ export function Compliance() {
     setAiLoading(true); setAiAnalysis(null);
     const score = data.compliance_scores?.find(s => s.category === selectedFramework);
     try {
-      const res = await fetch('/api/compliance/analyze', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/compliance/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
