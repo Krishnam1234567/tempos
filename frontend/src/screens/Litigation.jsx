@@ -32,7 +32,7 @@ export function Litigation() {
   const runAiAnalysis = async (c) => {
     setAiLoading(true); setAiAnalysis(null);
     try {
-      const res = await fetch('/api/litigation/analyze', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/litigation/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ case_id: c.id, description: `${c.title} - ${c.type} - Exposure: ${c.exposure}` }),
