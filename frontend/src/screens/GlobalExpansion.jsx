@@ -28,16 +28,26 @@ export function GlobalExpansion() {
       .finally(() => setLoading(false));
   }, []);
 
-  const runAiAnalysis = async () => {
-    if (!selected) return;
-    setAiLoading(true); setAiInsight(null);
-    try {
-      fetch(`${import.meta.env.VITE_API_URL}/expansion/analyze`)
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ jurisdiction: selected.name, business_description: 'Enterprise SaaS legal technology platform' }),
-      });
-      const d = await res.json();
+ const res = await fetch(
+  `${import.meta.env.VITE_API_URL}/expansion/analyze`,
+  {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      jurisdiction: selected.name,
+      business_description:
+        'Enterprise SaaS legal technology platform',
+    }),
+  }
+);
+
+if (!res.ok) {
+  throw new Error(`HTTP error! Status: ${res.status}`);
+}
+
+const d = await res.json();
       setAiInsight(d.analysis);
     } catch (e) {
       setAiInsight('AI analysis unavailable. Check backend connection.');
