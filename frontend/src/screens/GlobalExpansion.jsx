@@ -28,33 +28,41 @@ export function GlobalExpansion() {
       .finally(() => setLoading(false));
   }, []);
 
- const res = await fetch(
-  `${import.meta.env.VITE_API_URL}/expansion/analyze`,
-  {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      jurisdiction: selected.name,
-      business_description:
-        'Enterprise SaaS legal technology platform',
-    }),
-  }
-);
+const runAiAnalysis = async () => {
+  if (!selected) return;
 
-if (!res.ok) {
-  throw new Error(`HTTP error! Status: ${res.status}`);
-}
+  setAiLoading(true);
+  setAiInsight(null);
 
-const d = await res.json();
-      setAiInsight(d.analysis);
-    } catch (e) {
-      setAiInsight('AI analysis unavailable. Check backend connection.');
-    } finally {
-      setAiLoading(false);
+  try {
+    const res = await fetch(
+      `${import.meta.env.VITE_API_URL}/expansion/analyze`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          jurisdiction: selected.name,
+          business_description:
+            'Enterprise SaaS legal technology platform',
+        }),
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! Status: ${res.status}`);
     }
-  };
+
+    const d = await res.json();
+    setAiInsight(d.analysis);
+  } catch (e) {
+    console.error(e);
+    setAiInsight('AI analysis unavailable. Check backend connection.');
+  } finally {
+    setAiLoading(false);
+  }
+};
 
   if (loading) return <div className="p-6 flex items-center justify-center h-full text-muted-foreground">Loading expansion data...</div>;
   if (!data) return <div className="p-6 flex items-center justify-center h-full text-destructive">Failed to load expansion data</div>;
