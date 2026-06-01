@@ -32,21 +32,38 @@ export function Governance() {
   }, []);
 
   const draftResolution = async () => {
-    setDraftLoading(true); setDraftText(null);
-    try {
-      fetch(`${import.meta.env.VITE_API_URL}/governance/draft-resolution`)
+  setDraftLoading(true);
+  setDraftText(null);
+
+  try {
+    const res = await fetch(
+      `${import.meta.env.VITE_API_URL}/governance/draft-resolution`,
+      {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ resolution_type: 'ESOP Grant Authorization', context: 'Authorize issuance of 500,000 stock options to senior employees at $4.20 strike price under the FY2026 ESOP plan' }),
-      });
-      const d = await res.json();
-      setDraftText(d.draft);
-    } catch (e) {
-      setDraftText('AI drafting unavailable. Check backend connection.');
-    } finally {
-      setDraftLoading(false);
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          resolution_type: 'ESOP Grant Authorization',
+          context:
+            'Authorize issuance of 500,000 stock options to senior employees at $4.20 strike price under the FY2026 ESOP plan',
+        }),
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! Status: ${res.status}`);
     }
-  };
+
+    const d = await res.json();
+    setDraftText(d.draft);
+  } catch (e) {
+    console.error(e);
+    setDraftText('AI drafting unavailable. Check backend connection.');
+  } finally {
+    setDraftLoading(false);
+  }
+};
 
   if (loading) return <div className="p-6 flex items-center justify-center h-full text-muted-foreground">Loading governance data...</div>;
   if (!data) return <div className="p-6 flex items-center justify-center h-full text-destructive">Failed to load governance data</div>;
